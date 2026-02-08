@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
+import NeoCardFloatingBadge from './components/NeoCardFloatingBadge';
+
 import { 
   Wine, Sun, Music, Camera, Heart, Star, Check, X, 
   PartyPopper, MapPin, Clock, Sparkles, Crown, Martini, Calendar
@@ -71,6 +73,7 @@ export default function EvjfPage() {
              <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(236,72,153,0.3),transparent_70%)] animate-pulse-slow"></div>
              <div className="absolute -top-20 -left-20 w-96 h-96 bg-purple-600/30 rounded-full blur-[100px]"></div>
              <div className="absolute bottom-0 right-0 w-96 h-96 bg-pink-600/30 rounded-full blur-[100px]"></div>
+             <NeoCardFloatingBadge theme="light" />
 
              <motion.div 
                 initial={{ scale: 0.8, opacity: 0, rotate: -5 }}
@@ -115,6 +118,7 @@ export default function EvjfPage() {
       <VibeSection />
       <QuizSection />
       <ScheduleSection />
+      <NeoCardFloatingBadge theme="light" />
       <DressCodeSection />
       
       {/* RSVP Fixed Button */}
