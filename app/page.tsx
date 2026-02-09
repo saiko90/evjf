@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import NeoCardFloatingBadge from './components/NeoCardFloatingBadge';
 
 import { 
   Wine, Sun, Music, Camera, Heart, Star, Check, X, 
-  PartyPopper, MapPin, Clock, Sparkles, Crown, Martini, Calendar
+  PartyPopper, MapPin, Clock, Sparkles, Crown, Martini, Calendar,
+  Volume2, VolumeX // Ajout des icônes pour le son
 } from 'lucide-react';
 
 // --- DATA EVJF ---
@@ -17,8 +18,10 @@ const DATA = {
   date: "15-17 Mai 2026",
   location: "Villa Paradiso, Ibiza",
   hashtag: "#LeaSquad26",
-  heroImage: "https://images.unsplash.com/photo-1564221710304-0b3a58bbce2f?q=80&w=1920&auto=format&fit=crop", // Girls having fun pool
-  bridePhoto: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=800&auto=format&fit=crop", // Portrait cool girl sunglasses
+  // ICI : Le fichier mp3 (doit être dans le dossier public)
+  musicUrl: "/musicevg.mp3",
+  heroImage: "https://images.unsplash.com/photo-1564221710304-0b3a58bbce2f?q=80&w=1920&auto=format&fit=crop", 
+  bridePhoto: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=800&auto=format&fit=crop", 
   quiz: [
     { q: "Son cocktail préféré ?", options: ["Mojito", "Spritz", "Tequila PAF"], answer: 1 },
     { q: "Où a eu lieu la demande ?", options: ["À Venise", "Dans leur salon", "Au sommet de la Tour Eiffel"], answer: 1 },
@@ -112,8 +115,12 @@ export default function EvjfPage() {
 
   // --- MAIN SITE (PARTY MODE) ---
   return (
-    <div className="bg-[#0a0118] text-white font-sans selection:bg-pink-500 selection:text-white overflow-x-hidden leading-relaxed">
+    <div className="bg-[#0a0118] text-white font-sans selection:bg-pink-500 selection:text-white overflow-x-hidden leading-relaxed relative">
       <Navbar />
+      
+      {/* AJOUT : LECTEUR MUSIQUE */}
+      <MusicPlayer />
+
       <HeroSection />
       <VibeSection />
       <QuizSection />
@@ -145,6 +152,69 @@ export default function EvjfPage() {
 }
 
 // --- COMPONENTS ---
+
+// --- COMPOSANT MUSIQUE AJOUTÉ ---
+function MusicPlayer() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(null);
+
+  // Démarrage automatique dès l'arrivée sur la page (après login)
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.volume = 0.6; // Volume un peu plus fort pour la fête !
+      
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch((error) => {
+            console.log("Lecture auto bloquée par le navigateur:", error);
+            setIsPlaying(false);
+          });
+      }
+    }
+  }, []);
+
+  const togglePlay = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  return (
+    <div className="fixed bottom-24 left-6 z-50 md:bottom-6">
+      <audio ref={audioRef} src={DATA.musicUrl} loop preload="auto" />
+      
+      <button 
+        onClick={togglePlay}
+        className="w-12 h-12 rounded-full bg-pink-600/20 backdrop-blur-md border border-pink-500/50 flex items-center justify-center text-pink-500 hover:bg-pink-600 hover:text-white transition-all shadow-[0_0_15px_rgba(236,72,153,0.5)] group relative"
+      >
+        <span className="absolute left-14 bg-black/80 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-pink-500/30">
+           {isPlaying ? "Pause" : "Play Music"}
+        </span>
+        
+        {isPlaying ? (
+           <div className="flex gap-1 items-end h-4">
+             {/* Barres d'égaliseur roses pour le thème */}
+             <motion.div animate={{ height: [4, 16, 4] }} transition={{ repeat: Infinity, duration: 0.5 }} className="w-1 bg-current rounded-full" />
+             <motion.div animate={{ height: [8, 12, 8] }} transition={{ repeat: Infinity, duration: 0.7 }} className="w-1 bg-current rounded-full" />
+             <motion.div animate={{ height: [4, 16, 4] }} transition={{ repeat: Infinity, duration: 0.6 }} className="w-1 bg-current rounded-full" />
+           </div>
+        ) : (
+           <VolumeX size={20} />
+        )}
+      </button>
+    </div>
+  );
+}
 
 function Navbar() {
     return (
@@ -337,9 +407,9 @@ function ScheduleSection() {
                  <div className="space-y-6">
                      {DATA.schedule.map((item, i) => (
                          <motion.div 
-                            key={i}
-                            initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} viewport={{ once: true, margin: "-100px" }}
-                            className="flex flex-col md:flex-row items-start md:items-center gap-6 bg-white/5 hover:bg-white/10 border border-white/10 p-6 rounded-[2rem] transition-all group"
+                           key={i}
+                           initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} viewport={{ once: true, margin: "-100px" }}
+                           className="flex flex-col md:flex-row items-start md:items-center gap-6 bg-white/5 hover:bg-white/10 border border-white/10 p-6 rounded-[2rem] transition-all group"
                          >
                              <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:rotate-6 transition-transform shrink-0">
                                  {React.cloneElement(item.icon, { size: 30 })}
@@ -391,7 +461,6 @@ function DressItem({ title, desc, color }: any) {
         </motion.div>
     )
 }
-
 
 // --- RSVP MODAL (NEON PARTY STYLE) ---
 function RsvpModal({ onClose }: any) {
