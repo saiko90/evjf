@@ -156,13 +156,14 @@ export default function EvjfPage() {
 // --- COMPOSANT MUSIQUE AJOUTÉ ---
 function MusicPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef(null);
+  // CORRECTION ICI : on ajoute <HTMLAudioElement> pour TypeScript
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   // Démarrage automatique dès l'arrivée sur la page (après login)
   useEffect(() => {
     const audio = audioRef.current;
     if (audio) {
-      audio.volume = 0.6; // Volume un peu plus fort pour la fête !
+      audio.volume = 0.6; 
       
       const playPromise = audio.play();
       if (playPromise !== undefined) {
@@ -203,7 +204,6 @@ function MusicPlayer() {
         
         {isPlaying ? (
            <div className="flex gap-1 items-end h-4">
-             {/* Barres d'égaliseur roses pour le thème */}
              <motion.div animate={{ height: [4, 16, 4] }} transition={{ repeat: Infinity, duration: 0.5 }} className="w-1 bg-current rounded-full" />
              <motion.div animate={{ height: [8, 12, 8] }} transition={{ repeat: Infinity, duration: 0.7 }} className="w-1 bg-current rounded-full" />
              <motion.div animate={{ height: [4, 16, 4] }} transition={{ repeat: Infinity, duration: 0.6 }} className="w-1 bg-current rounded-full" />
